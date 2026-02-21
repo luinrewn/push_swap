@@ -1,21 +1,16 @@
-ifndef V
-  SILENT := @
-else
-  SILENT :=
-endif
-
 NAME := push_swap
-
-CC := clang
-
+CC := cc
 CFLAGS := -Wall -Werror -Wextra
 
-SRC := push_swap.c validate_input.c swaps.c radix.c 
-
+SRC := push_swap.c validate_input.c swaps.c radix.c low_num.c
 OBJ := $(SRC:.c=.o)
+DEP := $(SRC:.c=.d)
+
+SRC_LIBFT := ft_memset.c ft_bzero.c ft_memcpy.c ft_memmove.c ft_memchr.c ft_memcmp.c ft_strlen.c ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c ft_toupper.c ft_tolower.c ft_strchr.c ft_strrchr.c ft_strncmp.c ft_strlcpy.c ft_strlcat.c ft_strnstr.c ft_atoi.c ft_calloc.c ft_strdup.c ft_substr.c ft_strjoin.c ft_strtrim.c ft_split.c ft_itoa.c ft_strmapi.c ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_striteri.c ft_utoa.c options.c ft_printf.c ft_atol.c
+
+OBJ_LIBFT := $(addprefix libft/src/, $(SRC_LIBFT))
 
 LIBFT := libft/libft.a
-
 HEADERS := -Ilibft/src
 
 ART :="\
@@ -120,23 +115,28 @@ ART2 := "\
 ⡇⠘⣿⣀⣧⣐⡂⣸⣄⣛⣓⣂⣼⣀⣊⣸⡇⣹⣇⣳⣈⣁⣈⣿⣷⢘⣧⣀⣿⣀⡇⣹⣀⣎⠛⣆⣚⣀⣿⣿⡇⢊⡓⣀⣿⣿⣀⣛⣠⣆⣈⣃⣸⢀⣿⣿⣿⠸⣧⣙⣃⣼⣀⣿⣆⣙⣁⣿⣿⣀⡐⣀⡇⢸⣇⣰⣄⣙⣁⣿⣿⣙⣛⣠⣄⣒⣀⣿⣈⣸⣇⣸⣄⢛⣁⣯⢸⣏⠉⣹"
 
 all: $(LIBFT) $(NAME)
-	$(SILENT) @printf "%b\n" "$(ART)"
 
-$(LIBFT):
+$(LIBFT): $(OBJ_LIBFT)
 	$(MAKE) -C libft
 
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+	@printf "%b\n" "$(ART)"
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(HEADERS) -MMD -MP -c $< -o $@
+
+-include $(DEP)
 
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJ) $(DEP)
 	$(MAKE) -C libft clean
 	$(SILENT) @printf "%b\n" "$(ART2)"
 
-fclean:	clean
+fclean: clean
 	rm -f $(NAME)
 	$(MAKE) -C libft fclean
 
 re: fclean all
 
-.PHONY: clean fclean re all
+.PHONY: all clean fclean re

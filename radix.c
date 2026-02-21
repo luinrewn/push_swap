@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   radix.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mprokope <mprokope@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: mprokope <mprokope@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 01:47:13 by mprokope          #+#    #+#             */
-/*   Updated: 2025/11/23 23:23:50 by mprokope         ###   ########.fr       */
+/*   Updated: 2025/12/30 00:38:08 by mprokope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,28 +62,30 @@ int	lst_i(t_list *list_a)
 	return (i);
 }
 
-void	radix(t_list **list_a, t_list **list_b)
+void	radix(t_list **list_a, t_list **list_b, int max, int i)
 {
-	int	max;
-	int	i;
 	int	j;
 	int	size;
 
-	max = max_bits(indexx(*list_a));
-	size = lst_i(*list_a);
-	i = 0;
-	while (i < max)
+	while (i++ < max_bits(max))
 	{
-		j = size;
-		while (j--)
+		j = 0;
+		size = lst_i(*list_a);
+		while (j < size)
 		{
-			if (((*list_a)->id >> i) & 1)
-				ra(list_a);
+			if (!(*list_a))
+				exit(1);
+			if (((*list_a)->id >> (i - 1)) & 1)
+				ra(list_a, list_b);
 			else
 				pb(list_a, list_b);
+			j++;
 		}
 		while (*list_b)
+		{
 			pa(list_a, list_b);
-		i++;
+			if (!(*list_a))
+				exit(1);
+		}
 	}
 }

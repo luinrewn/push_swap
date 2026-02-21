@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mprokope <mprokope@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: mprokope <mprokope@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 16:40:08 by mprokope          #+#    #+#             */
-/*   Updated: 2025/11/23 23:36:48 by mprokope         ###   ########.fr       */
+/*   Updated: 2026/01/02 19:42:41 by mprokope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_list	*inputlist(int argc, char **argv)
 	{
 		new = malloc(sizeof(t_list));
 		if (!new)
-			return (NULL);
+			return (nuke(&head, &new), NULL);
 		new->val = ft_atol(argv[i]);
 		new->next = NULL;
 		if (!head)
@@ -41,20 +41,59 @@ t_list	*inputlist(int argc, char **argv)
 	return (head);
 }
 
+void	nuke(t_list **list_a, t_list **list_b)
+{
+	t_list	*temp;
+
+	while (*list_a)
+	{
+		temp = (*list_a)->next;
+		free(*list_a);
+		*list_a = temp;
+	}
+	while (*list_b)
+	{
+		temp = (*list_b)->next;
+		free(*list_b);
+		*list_b = temp;
+	}
+}
+
+void	radix_runner(t_list **list_a, t_list **list_b, int max)
+{
+	int	i;
+
+	i = 0;
+	radix(list_a, list_b, max, i);
+}
+
 int	main(int argc, char **argv)
 {
 	t_list	*list_a;
 	t_list	*list_b;
+	int		max;
 
 	if (argc < 2)
 		return (0);
-	if (check_num(argc, argv))
-		return (ft_printf("%e\n", "Error"));
+	if (check_num(argv))
+		return (write(2, "Error\n", 6));
 	list_a = inputlist(argc, argv);
+	if (!list_a)
+		exit(1);
+	max = indexx(list_a);
 	list_b = NULL;
-	if (dup_check(list_a) || in_max(list_a))
-		return (-1);
-	radix(&list_a, &list_b);
+	if (dup_check(list_a) || in_max(list_a, argv))
+	{
+		nuke(&list_a, &list_b);
+		write(2, "Error\n", 6);
+		exit(1);
+	}
+	if (alr_sorted(list_a))
+		return (nuke(&list_a, &list_b), 0);
+	if (argc < 7)
+		return (sort_5(&list_a, &list_b, argc), nuke(&list_a, &list_b), 0);
+	radix_runner(&list_a, &list_b, max);
+	nuke(&list_a, &list_b);
 }
 /*
 void print_list(t_list *head)

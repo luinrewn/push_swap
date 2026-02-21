@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   swaps.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mprokope <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mprokope <mprokope@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 23:28:44 by mprokope          #+#    #+#             */
-/*   Updated: 2025/11/23 23:29:27 by mprokope         ###   ########.fr       */
+/*   Updated: 2025/11/30 18:16:34 by mprokope         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-t_list	*ra(t_list **list_a)
+t_list	*ra(t_list **list_a, t_list **list_b)
 {
 	t_list	*start;
 	t_list	*end;
+	int		error;
 
 	if (!list_a || !(*list_a) || !(*list_a)->next)
 		return (*list_a);
@@ -26,13 +27,16 @@ t_list	*ra(t_list **list_a)
 		end = end->next;
 	end->next = start;
 	start->next = NULL;
-	ft_printf("ra\n");
+	error = write(1, "ra\n", 3);
+	if (error == -1)
+		nuke(list_a, list_b);
 	return (*list_a);
 }
 
 t_list	*pa(t_list **list_a, t_list **list_b)
 {
 	t_list	*temp;
+	int		error;
 
 	if (!list_b || !(*list_b))
 		return (*list_a);
@@ -40,13 +44,16 @@ t_list	*pa(t_list **list_a, t_list **list_b)
 	*list_b = (*list_b)->next;
 	temp->next = *list_a;
 	*list_a = temp;
-	ft_printf("pa\n");
+	error = write(1, "pa\n", 3);
+	if (error == -1)
+		nuke(list_a, list_b);
 	return (*list_a);
 }
 
 t_list	*pb(t_list **list_a, t_list **list_b)
 {
 	t_list	*temp;
+	int		error;
 
 	if (!list_a || !(*list_a))
 		return (*list_b);
@@ -54,29 +61,58 @@ t_list	*pb(t_list **list_a, t_list **list_b)
 	*list_a = (*list_a)->next;
 	temp->next = *list_b;
 	*list_b = temp;
-	ft_printf("pb\n");
+	error = write(1, "pb\n", 3);
+	if (error == -1)
+		nuke(list_a, list_b);
 	return (*list_b);
 }
 
-/*
-t_list	*sa(t_list *list_a)
+t_list	*sa(t_list **list_a, t_list **list_b)
 {
 	t_list	*temp;
 	int		i;
 	int		j;
+	int		error;
 
-	if (!list_a || !list_a->next)
-		return (list_a);
-	temp = list_a->next;
-	i = list_a->val;
-	list_a->val = temp->val;
+	if (!(*list_a) || !(*list_a)->next)
+		return ((*list_a));
+	temp = (*list_a)->next;
+	i = (*list_a)->val;
+	(*list_a)->val = temp->val;
 	temp->val = i;
-	j = list_a->id;
-	list_a->id = temp->id;
+	j = (*list_a)->id;
+	(*list_a)->id = temp->id;
 	temp->id = j;
-	return (list_a);
+	error = write(1, "sa\n", 3);
+	if (error == -1)
+		nuke(list_a, list_b);
+	return (*list_a);
 }
 
+t_list	*rra(t_list **list_a, t_list **list_b)
+{
+	t_list	*start;
+	t_list	*end;
+	int		error;
+
+	if (!list_a || !(*list_a) || !(*list_a)->next)
+		return (*list_a);
+	start = NULL;
+	end = *list_a;
+	while (end->next)
+	{
+		start = end;
+		end = end->next;
+	}
+	start->next = NULL;
+	end->next = *list_a;
+	*list_a = end;
+	error = write(1, "rra\n", 4);
+	if (error == -1)
+		nuke(list_a, list_b);
+	return (*list_a);
+}
+/*
 t_list	*sb(t_list *list_b)
 {
 	t_list	*temp;
@@ -163,27 +199,8 @@ t_list	*rrb(t_list **list_b)
 	*list_b = end;
 	return (*list_b);
 }
-
-t_list	*rra(t_list **list_a)
-{
-	t_list	*start;
-	t_list	*end;
-
-	if (!list_a || !(*list_a) || !(*list_a)->next)
-		return (*list_a);
-	start = NULL;
-	end = *list_a;
-	while (end->next)
-	{
-		start = end;
-		end = end->next;
-	}
-	start->next = NULL;
-	end->next = *list_a;
-	*list_a = end;
-	return (*list_a);
-}
-
+*/
+/*
 void	rrr(t_list **list_a, t_list **list_b)
 {
 	rra(list_a);
